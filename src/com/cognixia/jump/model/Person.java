@@ -4,7 +4,7 @@
 // Assignment: Java Project 1
 // Date: 7/19/21
 
-package com.cognixia.jump.intermediatejava.JavaFinalProject_Employee;
+package com.cognixia.jump.model;
 
 abstract class Person {
 	

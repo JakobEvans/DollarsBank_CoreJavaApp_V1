@@ -17,14 +17,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import com.cognixia.jump.model.Customer;
 
-public class EmployeeManagementSystem{
+
+public class CustomerManagementSystem{
 	
 	
-	private static int numberEmployees = 0; 
+	private static int numberCustomers = 0; 
 	
 	
-	private static Map<Integer,Employee> allEmployees = new HashMap<Integer, Employee>();
+	private static Map<Integer,Customer> allCustomers = new HashMap<Integer, Customer>();
 
 	private static int maxID;
 	
@@ -44,46 +46,46 @@ public class EmployeeManagementSystem{
 		return maxID;
 	}
 	
-	public static void readOldEmployeeData (String currentEmployeeData){
+	public static void readOldCustomerData (String currentCustomerData){
 		
 //		System.out.println("\n\nReading data from fi:");
 		
-		String[] employeeData = currentEmployeeData.split("\\s+"); 
+		String[] CustomerData = currentCustomerData.split("\\s+"); 
 		
 		ArrayList<String> finalData = new ArrayList<>();
 
 		int tempID = 0; 
-		for (int j = 0; j < employeeData.length; j++) {
-			// we dont initialize a employee with ID
+		for (int j = 0; j < CustomerData.length; j++) {
+			// we dont initialize a Customer with ID
 			if(j == 0) {
 				// need to call the setter because constructor doesnt have ID
-				tempID = Integer.parseInt(employeeData[j]);
+				tempID = Integer.parseInt(CustomerData[j]);
 				continue;
 			}
 			else {
 				String temp = new String();
-				temp = employeeData[j];
+				temp = CustomerData[j];
 				temp = temp.trim();
 				
 				finalData.add(temp);
 			}
 		}
 		
-		Employee tempEmployee = new Employee(finalData.get(0),finalData.get(1),finalData.get(2) ,
+		Customer tempCustomer = new Customer(finalData.get(0),finalData.get(1),finalData.get(2) ,
 				Integer.parseInt(finalData.get(3)),finalData.get(4), finalData.get(5), Integer.parseInt(finalData.get(6)), finalData.get(7));
 		
 		// make sure to set id reciveved from .txt
-		tempEmployee.setWorkerID(tempID);
+		tempCustomer.setWorkerID(tempID);
 		
-		addEmployee(tempEmployee);
+		addCustomer(tempCustomer);
 
 
 		
 	}
 	
 	
-	// saves employee data back to .txt file for future use
-	public static void saveEmployeeData (){
+	// saves Customer data back to .txt file for future use
+	public static void saveCustomerData (){
 		
 		String[] header = {"ID", "First_Name", "Last_Name", "Gender", "Age", "Email", "Phone", "Salary", "Department"};
 		
@@ -97,7 +99,7 @@ public class EmployeeManagementSystem{
 		
 		try(PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter("resources/data.txt")))){
 					
-					for(Entry<Integer, Employee> currentEntry : allEmployees.entrySet()) {
+					for(Entry<Integer, Customer> currentEntry : allCustomers.entrySet()) {
 						
 						
 						stringBuild.append(Integer.toString(currentEntry.getValue().getId()) + "	");
@@ -133,16 +135,16 @@ public class EmployeeManagementSystem{
 	
 	
 	
-public static void listEmployeesByDepartment(int department) {
+public static void listCustomersByDepartment(int department) {
 	
 	 
 	 String [] allDepartments = {"SALES", "IT", "SOFTWARE", "MANAGEMENT"};
 
 	 
-	 Employee [] temp = allEmployees.values().stream().filter(e -> e.getDepartment().equals(allDepartments[department])).toArray(size -> new Employee[size]);
+	 Customer [] temp = allCustomers.values().stream().filter(e -> e.getDepartment().equals(allDepartments[department])).toArray(size -> new Customer[size]);
 	
 	  
-	 System.out.println("*** The employees in the " + allDepartments[department] + " Department ***");
+	 System.out.println("*** The Customers in the " + allDepartments[department] + " Department ***");
 	 for (int i = 0; i < temp.length; i++) {
 		 System.out.println(temp[i].toString());
 	 }
@@ -150,17 +152,17 @@ public static void listEmployeesByDepartment(int department) {
 	
 }
 	
-public static void updateEmployee(int key) {
+public static void updateCustomer(int key) {
 		
 		Scanner scan = new Scanner(System.in);
-		Employee tempEmployee = allEmployees.get(key);
+		Customer tempCustomer = allCustomers.get(key);
 		
-		System.out.println(tempEmployee.toString());
+		System.out.println(tempCustomer.toString());
 		
 		System.out.println("\n\nWhich attribute would you like to update?");
-		tempEmployee.listAttributeNames();
+		tempCustomer.listAttributeNames();
 		
-		int choice = EMSRunner.checkInt(scan);
+		int choice = DollarsBankApplication.checkInt(scan);
 		
 		
 		String userStringInput = "";
@@ -174,29 +176,29 @@ public static void updateEmployee(int key) {
 				userStringInput = scan.nextLine();
 				
 //				userStringInput = "CHecking to see if it works";// TO REMOVE
-				tempEmployee.setfName(userStringInput);
+				tempCustomer.setfName(userStringInput);
 				break;
 			case(1):
 				System.out.println("\nPlease enter your string for Last Name:\n");
 
 				userStringInput = scan.nextLine();
-				tempEmployee.setlName(userStringInput);
+				tempCustomer.setlName(userStringInput);
 				break;
 
 			case(2):
 				System.out.println("\nPlease enter your string for Gender:\n");
 
 				userStringInput = scan.nextLine();
-				tempEmployee.setGender(userStringInput);	
+				tempCustomer.setGender(userStringInput);	
 				break;
 
 				
 			case(3):
 				System.out.println("\nPlease enter your int for Age:\n");
 
-				userIntInput = EMSRunner.checkInt(scan);
+				userIntInput = DollarsBankApplication.checkInt(scan);
 				
-				tempEmployee.setAge(userIntInput);
+				tempCustomer.setAge(userIntInput);
 				break;
 
 				
@@ -204,29 +206,29 @@ public static void updateEmployee(int key) {
 				System.out.println("\nPlease enter your string for Email:\n");
 
 				userStringInput = scan.nextLine();
-				tempEmployee.setEmail(userStringInput);
+				tempCustomer.setEmail(userStringInput);
 				break;
 
 			case(5):
 				System.out.println("\nPlease enter your string for Phone Number\n");
 
 				userStringInput = scan.nextLine();
-				tempEmployee.setPhoneNumber(userStringInput);
+				tempCustomer.setPhoneNumber(userStringInput);
 				break;
 
 			case(6):
 				System.out.println("\nPlease enter your int for Salary:\n");
 
-				userIntInput = EMSRunner.checkInt(scan);
+				userIntInput = DollarsBankApplication.checkInt(scan);
 				// eat the \n
-				tempEmployee.setSalary(userIntInput);
+				tempCustomer.setSalary(userIntInput);
 				break;
 
 			case(7):
 				System.out.println("\nPlease enter your string for Department:\n");
 
 				userStringInput = scan.nextLine();
-				tempEmployee.setDepartment(userStringInput);
+				tempCustomer.setDepartment(userStringInput);
 				break;
 			default:
 				System.out.println("Hit default");
@@ -239,35 +241,35 @@ public static void updateEmployee(int key) {
 		
 	}
 	
-	public static void addEmployee(Employee employee) {
+	public static void addCustomer(Customer Customer) {
 		
 		
 		maxID++;
 		
-		allEmployees.put(maxID, employee);
+		allCustomers.put(maxID, Customer);
 		
-		numberEmployees++;
+		numberCustomers++;
 		
 		
 		
 	}
 	
 	
-	public static void deleteEmployee(int key) {
-		getAllEmployees().remove(key);
+	public static void deleteCustomer(int key) {
+		getAllCustomers().remove(key);
 			
 	}
 	
-	// Finds the Highest ID considering the data.txt files previous employees
-	public static void checkHighestEmployeeID() {
+	// Finds the Highest ID considering the data.txt files previous Customers
+	public static void checkHighestCustomerID() {
 		
-		int maxID = Collections.max(getAllEmployees().keySet());
+		int maxID = Collections.max(getAllCustomers().keySet());
 
-        Map.Entry<Integer, Employee> entryWithMaxKey = null;
+        Map.Entry<Integer, Customer> entryWithMaxKey = null;
         
-        if(getAllEmployees().size() > 0) {
+        if(getAllCustomers().size() > 0) {
 
-			for(Entry<Integer, Employee> currentEntry : getAllEmployees().entrySet()) {
+			for(Entry<Integer, Customer> currentEntry : getAllCustomers().entrySet()) {
 					
 		            if (entryWithMaxKey == null || currentEntry.getKey().compareTo(entryWithMaxKey.getKey()) > 0) {
 		  
@@ -280,7 +282,7 @@ public static void updateEmployee(int key) {
 				
 			maxID = entryWithMaxKey.getKey();
 
-        }// ID starts at 0 because there is no employee data in map
+        }// ID starts at 0 because there is no Customer data in map
         else {
         	maxID = 0;
         }
@@ -288,11 +290,11 @@ public static void updateEmployee(int key) {
 	
 	
 	
-	public static void printEmployees() {
+	public static void printCustomers() {
 
 	    System.out.print(String.format("%-3s %-14s %-14s %-7s %-4s %-24s %-12s %-7s %-7s\n","ID","First_Name","Last_Name", "Gender", "Age", "Email", "Phone_Num", "Salary", "Department"));
 
-		for(Entry<Integer, Employee> temp : getAllEmployees().entrySet()) {
+		for(Entry<Integer, Customer> temp : getAllCustomers().entrySet()) {
 			
 		    System.out.print(String.format("%-3s %-14s %-14s %-7s %-4s %-24s %-12s %-7s %-7s\n",
 		    		temp.getValue().getWorkerID(),temp.getValue().getfName(),temp.getValue().getlName(), 
@@ -305,18 +307,18 @@ public static void updateEmployee(int key) {
 		
 	}
 
-	public static void printNumEmployees() {
+	public static void printNumCustomers() {
 		
-		System.out.println("The number of Employees is : " + numberEmployees);
+		System.out.println("The number of Customers is : " + numberCustomers);
 		
 	}
 
-	public static Map<Integer,Employee> getAllEmployees() {
-		return allEmployees;
+	public static Map<Integer,Customer> getAllCustomers() {
+		return allCustomers;
 	}
 
-	public static void setAllEmployees(Map<Integer,Employee> allEmployees) {
-		EmployeeManagementSystem.allEmployees = allEmployees;
+	public static void setAllCustomers(Map<Integer,Customer> allCustomers) {
+		CustomerManagementSystem.allCustomers = allCustomers;
 	}
 
 	
