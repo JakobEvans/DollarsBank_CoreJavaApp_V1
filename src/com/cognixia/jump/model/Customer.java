@@ -1,97 +1,125 @@
-package com.cognixia.jump.model;
 
-
-
-
-
-
-
-//Author: Jakob Evans
+// Author: Jakob Evans
 
 // Assignment: Java Project 1
 // Date: 7/19/21
 
+package com.cognixia.jump.model;
 
 import java.util.ArrayList;
 
-import java.util.stream.Stream;
+public class Customer {
+	
+	
+	private int customerId;
+	
+	private static int maxCustomerId = 1;
 
-import com.cognixia.jump.application.CustomerManagementSystem;
+	private String name;
 
-public class Customer extends Person{
 
-	private int workerID = CustomerManagementSystem.getMaxID();
+	private String address;
 
-	private int salary;
-	private String department;
+
+
+
+	private String phoneNumber;
+
+
+	private Account customerAccount;
 	
 	
 
-	public Customer(String fName,String lName, String gender, int age, String email, String phoneNumber, int salary, String department) {
 
+	public Customer(String name, String address, String phoneNumber, Account customerAccount) {
+		super();
+	
+		this.customerId = maxCustomerId++;
+		this.name = name;
+		this.address = address;
+
+		this.phoneNumber = phoneNumber;
+		this.customerAccount = customerAccount;
 		
-		super(fName, lName, gender, age, email, phoneNumber);
-		this.workerID = workerID++;
-
-
-		this.salary = salary;
-		this.department = department;
+	}
+	
+	public String getAddress() {
+		return address;
 	}
 
-	
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 
 	public Customer() {
 		super();
-		this.salary = -1;
-		this.department = "";
-		
-		
-	}
+		this.customerId = maxCustomerId++;
+		this.address = "N/A";
+
+		this.name = "Null";
+		this.phoneNumber = "0000000000";
+		this.customerAccount = new Account();
 	
-	public void listAttributeNames() {
-		System.out.println("(0) First Name\n(1) Last Name\n(2) Gender\n"
-				+ "(3) Age\n(4) Email\n(5) Phone Number\n(6) Salary\n(7) Department" );
-		
-	}
-	
-
-	
-
-	public int getSalary() {
-		return salary;
 	}
 
-	public void setSalary(int salary) {
-		this.salary = salary;
+	public int getCustomerId() {
+		return customerId;
 	}
 
-	public String getDepartment() {
-		return department;
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
 	}
 
-	public void setDepartment(String department) {
-		this.department = department;
+
+	public String getName() {
+		return name;
 	}
 
-	public int getId() {
-		return workerID;
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+
+	public Account getCustomerAccount() {
+		return customerAccount;
+	}
+
+
+	public void setCustomerAccount(Account customerAccount) {
+		this.customerAccount = customerAccount;
 	}
 
 	@Override
 	public String toString() {
-		return "Customer [workerID=" + workerID + ", First Name=" + super.getfName() + ", Last Name=" + super.getlName() + " Gender =" + super.getGender() + ", age=" + super.getAge() + 
-				" Email=" + super.getEmail() + ", Email=" + super.getPhoneNumber() + ", salary=" + salary + ", department=" + department + "]";
+		return "Customer [customerId=" + customerId +" name=" + name + ", address=" + address
+				+ ", phoneNumber=" + phoneNumber + ", customerAccount=" + customerAccount + "]";
 	}
-
-	public int getWorkerID() {
-		return workerID;
-	}
-
-	public void setWorkerID(int workerID) {
-		this.workerID = workerID;
-	}
-
 
 	
+	public String customerInformation() {
+		return "CustomerId --> " + customerId +
+				"\nName = " + name + 
+				"\nCustomer Address = " + address +
+				 "\nCustomer Phone Number = " + phoneNumber + 
+				"\nAccount Username = " + customerAccount.getUsername() + 
+				"\nAccount Password = " + customerAccount.getPassword() +
+				"\nAccount Initial Deposit = " + customerAccount.getInitialDeposit() + 
+				"\nCurrent Savings Account Balance: " + customerAccount.getSavings().getCurrentBalance() +"\n";
+	}
+
 
 }
