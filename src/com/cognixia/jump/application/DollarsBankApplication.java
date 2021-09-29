@@ -60,7 +60,7 @@ public class DollarsBankApplication {
 						System.out.println("Exiting the program...");
 						break;
 					default:
-						System.out.println("\n\nPlease enter one of the valid choices\n\n");
+						consolePrinter.printError("Please enter a choice from above.");
 						
 				}
 				
@@ -141,7 +141,7 @@ public class DollarsBankApplication {
 
 			}
 			catch(InputMismatchException exception) {
-				consolePrinter.printError("Please enter an integer from one of the choices.");
+				consolePrinter.printError("Please enter a choice from above.");
 			}
 			finally {
 				sc.nextLine();
