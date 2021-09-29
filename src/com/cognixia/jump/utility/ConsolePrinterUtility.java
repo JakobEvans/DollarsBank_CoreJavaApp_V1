@@ -49,7 +49,7 @@ public class ConsolePrinterUtility {
 	
 	public void enterChoice(int numChoices) {
 		System.out.println();
-		System.out.printf(ColorsUtility.ANSI_GREEN + "Enter Choice (" + ColorsUtility.ANSI_GREEN);
+		System.out.printf(ColorsUtility.ANSI_GREEN + "Enter Choice (" );
 		for(int i = 1; i < numChoices; i++) {
 			if(i != numChoices-1) {
 				System.out.print(i + ",");
@@ -63,14 +63,14 @@ public class ConsolePrinterUtility {
 		}
 		
 		System.out.printf(" or " + numChoices +  ")");
-		System.out.println(ColorsUtility.ANSI_BLACK);
+		System.out.println(ColorsUtility.ANSI_RESET);
 	}
 	
 
 	// can only print one line ,will improve for multi-line strings
 	public void printFormattedTextBox(String str){
 		
-		System.out.printf(ColorsUtility.ANSI_BLUE + "+" + ColorsUtility.ANSI_BLUE );
+		System.out.printf(ColorsUtility.ANSI_BLUE + "+");
 		
 		for(int i = 0; i < str.length()+2; i++) {
 			
@@ -91,7 +91,7 @@ public class ConsolePrinterUtility {
 		}
 		System.out.println("+");
 
-		System.out.printf(ColorsUtility.ANSI_BLACK);
+		System.out.printf(ColorsUtility.ANSI_RESET);
 
 	}
 	
@@ -107,11 +107,11 @@ public class ConsolePrinterUtility {
 	public void successMessage(String string) {
 		System.out.println();
 
-		System.out.printf(ColorsUtility.ANSI_GREEN + "*" + string + "*" + ColorsUtility.ANSI_GREEN);
+		System.out.printf(ColorsUtility.ANSI_GREEN +  string  + ColorsUtility.ANSI_GREEN);
 		System.out.printf(ColorsUtility.ANSI_BLACK);
 		
 		System.out.println();
-		System.out.println();
+		System.out.println(ColorsUtility.ANSI_RESET);
 
 	}
 
@@ -121,7 +121,7 @@ public class ConsolePrinterUtility {
 		System.out.printf(ColorsUtility.ANSI_BLACK);
 		
 		System.out.println();
-		System.out.println();
+		System.out.println(ColorsUtility.ANSI_RESET);
 
 
 	}
