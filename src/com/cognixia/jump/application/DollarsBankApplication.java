@@ -23,12 +23,14 @@ import com.cognixia.jump.model.Customer;
 import com.cognixia.jump.utility.ConsolePrinterUtility;
 
 public class DollarsBankApplication {
+	
+	private static ConsolePrinterUtility consolePrinter = ConsolePrinterUtility.getInstance();
+
 
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		
-		ConsolePrinterUtility consolePrinter = ConsolePrinterUtility.getInstance();
 	
 		DollarsBankController controller = DollarsBankController.getInstance();
 
@@ -139,7 +141,7 @@ public class DollarsBankApplication {
 
 			}
 			catch(InputMismatchException exception) {
-				System.out.println("\n\nPlease enter an integer.\n\n");
+				consolePrinter.printError("Please enter an integer from one of the choices.");
 			}
 			finally {
 				sc.nextLine();

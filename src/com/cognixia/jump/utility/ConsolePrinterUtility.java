@@ -67,12 +67,12 @@ public class ConsolePrinterUtility {
 	}
 	
 
-	
+	// can only print one line ,will improve for multi-line strings
 	public void printFormattedTextBox(String str){
 		
 		System.out.printf(ColorsUtility.ANSI_BLUE + "+" + ColorsUtility.ANSI_BLUE );
 		
-		for(int i = 0; i < str.length()+1; i++) {
+		for(int i = 0; i < str.length()+2; i++) {
 			
 			System.out.printf("-");
 		}
@@ -81,11 +81,11 @@ public class ConsolePrinterUtility {
 		
 		System.out.printf("| " + str);
 		
-		System.out.println("|");
+		System.out.println(" |");
 
 		System.out.printf("+");
 
-		for(int i = 0; i < str.length()+1; i++) {
+		for(int i = 0; i < str.length()+2; i++) {
 				
 				System.out.printf("-");
 		}
@@ -103,12 +103,24 @@ public class ConsolePrinterUtility {
 		return single_instance;
 		
 	}
+	
+	public void successMessage(String string) {
+		System.out.println();
+
+		System.out.printf(ColorsUtility.ANSI_GREEN + "*" + string + "*" + ColorsUtility.ANSI_GREEN);
+		System.out.printf(ColorsUtility.ANSI_BLACK);
+		
+		System.out.println();
+		System.out.println();
+
+	}
 
 	public void printError(String string) {
-		// TODO Auto-generated method stub
+		System.out.println();
 		System.out.printf(ColorsUtility.ANSI_RED + string + ColorsUtility.ANSI_RED);
 		System.out.printf(ColorsUtility.ANSI_BLACK);
 		
+		System.out.println();
 		System.out.println();
 
 

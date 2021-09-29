@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
@@ -41,55 +42,75 @@ public class DollarsBankController {
 	public void createNewAccount(Scanner scanner) {
 		
 	
-		
+		String date = getDateAndTime();
+
 		
 		printer.printFormattedTextBox("Enter Details for New Account");		
 		
 		String options[] = printer.getNewAccountOptions();
-		String userInput[] = new String[6];
+		String userInput[] = new String[5];
 		
+		
+		
+		// grab all data except initialDeposit
 		// print the options for creating account and store that input
-		for(int i = 0; i < options.length; i++) {
+		for(int i = 0; i < options.length-1; i++) {
 			System.out.println(options[i]);
-			
 			userInput[i] = scanner.nextLine();
+			
 		}
 		
 		
-		System.out.println("Printing the array:");
-		System.out.println(Arrays.toString(userInput));
-		
-		// account has a savingsAccount
-//		Account account = new Account(userInput[3],userInput[4],Double.parseDouble(userInput[5]), new SavingsAccount(Double.parseDouble(userInput[5])));
-		Account account = new Account(userInput[3],userInput[4],Double.parseDouble(userInput[5]));
+		// print initialDeposit option
+		System.out.println(options[5]);
+		Double initialDeposit = checkDouble(scanner);
 
-		//Customer has an account
-		Customer customer = new Customer(userInput[0],userInput[1], userInput[2], account);
+			
+	
+		
+		// account has a savingsAccount, will initialize within account constructor
+		Account currentAccount = new Account(userInput[3],userInput[4],initialDeposit);
 
-		System.out.println("\n\nThe account and customer object:");
-		System.out.println(account.toString());
-		System.out.println(customer.toString() +"\n");
+		//currentCustomer has an account
+		Customer currentCustomer = new Customer(userInput[0],userInput[1], userInput[2], currentAccount);
+
+	
 		
+		// Maps for grabbing needed user
+		username_To_Customer.put(userInput[3], currentCustomer);
+		customerId_To_Account.put(currentCustomer.getCustomerId(), currentAccount);
+		// store that customer in memory
+		allCustomers_Accounts.add(currentCustomer);
+
 		
-		username_To_Customer.put(userInput[3], customer);
-		customerId_To_Account.put(customer.getCustomerId(), account);
+		currentAccount.addTransaction("\nInitial deposit of " + initialDeposit + " in the account [ " + currentCustomer.getCustomerAccount().getUsername() + " ]");
+		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
+
 		
-//		
-//		System.out.println("Getting customer by username:");
-//		System.out.println(username_To_Customer.get("d"));
-//		
-//		System.out.println();
-//		System.out.println("Getting account by customerID:");
-//		System.out.println(customerId_To_Account.get(customer.getCustomerId()));
-//		
-		
-		allCustomers_Accounts.add(customer);
-//		
-//		System.out.println("\n\nAll accounts");
-//		System.out.println((allCustomers_Accounts));
 		
 	}
 	
+	public Double checkDouble(Scanner scanner) {
+		boolean isDouble = false;
+		Double initialDeposit = 0.0;
+
+		do {
+			
+			try{
+				initialDeposit = Double.parseDouble(scanner.nextLine());
+				isDouble = true;
+			}
+			catch(NumberFormatException e) {
+				printer.printError("Please enter a number.");
+			}
+		}
+		while(isDouble == false);
+		return initialDeposit;
+	}
+
+	
+
+
 	
 	public boolean checkPassword(String password, String regex) {
 		
@@ -129,14 +150,15 @@ public class DollarsBankController {
 
 				do {
 					
+					//Change home screen after initial log in
 					if(counter > 0) {
 						printer.printFormattedTextBox("Logged in as [ " +  username + " ]");
 
-						
 					}
 					
+					//print all options for signed in user
 					printer.printChoices(printer.getOptionsSignedIn());
-					
+					// print green choices
 					printer.enterChoice(6);
 					
 					
@@ -273,7 +295,10 @@ public class DollarsBankController {
 	public void withdraw(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Withdraw");
 		
-		Double currentBalance = currentCustomer.getCustomerAccount().getSavings().getCurrentBalance();
+		Account currentAccount = currentCustomer.getCustomerAccount();
+
+		
+		Double currentBalance = currentAccount.getSavings().getCurrentBalance();
 		
 	
 		Double withdraw;
@@ -282,14 +307,19 @@ public class DollarsBankController {
 		do{
 			System.out.println("Your current balance is : " + currentBalance);
 			System.out.println("How much would you like to withdraw?");
-			withdraw = Double.parseDouble(scanner.nextLine());
-			if(withdraw <= currentBalance) {
+			withdraw = checkDouble(scanner);
+			
+			if(withdraw == 0.0) {
+				
+				printer.printError("Insufficient funds in account for withdraw, your balance is 0.0");
+
+			}
+			else if(withdraw <= currentBalance) {
 		
 				currentCustomer.getCustomerAccount().getSavings().withdrawFromAccount(withdraw);
 			}
 			else {
-				
-				System.out.println("Insufficient funds in account for withdraw");
+				printer.printError("Insufficient funds in account for withdraw, your balance is " + currentBalance);
 			}
 		}
 		while(withdraw > currentBalance);
@@ -298,6 +328,14 @@ public class DollarsBankController {
 		System.out.println("After the withdraw your current balance is: " + currentCustomer.getCustomerAccount().getSavings().getCurrentBalance());
 
 		System.out.println();
+		
+		String date = getDateAndTime();
+
+		
+		currentAccount.addTransaction("\nWithdraw of " + withdraw + " from the account [ " + currentCustomer.getCustomerAccount().getUsername() + " ]");
+		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
+
+		
 		
 	}
 	
@@ -308,7 +346,20 @@ public class DollarsBankController {
 	
 	public void fundsTransfer(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Funds Transfer");
+		
+		System.out.println("\nWhat is the username of the person you want to transfer money to?");
+		String otherUsername = scanner.nextLine();
+		//if the current customers user name is the same as the other username, print message
+		if(currentCustomer.getCustomerAccount().getUsername().equals(otherUsername)) {
+			printer.printError("You cannot transfer money to your self!");
+		}
+		else if(username_To_Customer.containsKey(otherUsername)) {
+			printer.successMessage("Successfully found user!");
+		}
+		else {
+			printer.printError("User was not found.");
 
+		}
 		
 	}
 	
