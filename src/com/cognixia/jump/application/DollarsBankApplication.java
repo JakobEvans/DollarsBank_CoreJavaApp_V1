@@ -23,58 +23,50 @@ import com.cognixia.jump.model.Customer;
 import com.cognixia.jump.utility.ConsolePrinterUtility;
 
 public class DollarsBankApplication {
-	
+
 	private static ConsolePrinterUtility consolePrinter = ConsolePrinterUtility.getInstance();
-
-
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		
-	
+
 		DollarsBankController controller = DollarsBankController.getInstance();
 
 		consolePrinter.printFormattedTextBox("DOLLARSBANK Welcomes you!");
 
 		int userChoice;
 
-		
 //		CustomerManagementSystem.checkHighestCustomerID();
 		do {
-			
-				consolePrinter.printMainMenu();
-				consolePrinter.enterChoice(3);
-				// check for integer input (anything other than regex --> 1-9* rejected
-				userChoice = checkInt(scan);
 
-				switch(userChoice) {
-					case 1:
-						controller.createNewAccount(scan);
-						
-						break;
-						
-					case 2:
-						controller.login(scan);
-						break;
-					case 3: 
-						System.out.println("Exiting the program...");
-						break;
-					default:
-						consolePrinter.printError("Please enter a choice from above.");
-						
-				}
-				
+			consolePrinter.printMainMenu();
+			consolePrinter.enterChoice(3);
+			// check for integer input (anything other than regex --> 1-9* rejected
+			userChoice = checkInt(scan);
+
+			switch (userChoice) {
+			case 1:
+				controller.createNewAccount(scan);
+
+				break;
+
+			case 2:
+				controller.login(scan);
+				break;
+			case 3:
+				System.out.println("Exiting the program...");
+				break;
+			default:
+				consolePrinter.printError("Please enter a choice from above.");
+
 			}
-			while(userChoice != 3);
-		
+
+		} while (userChoice != 3);
+
 		scan.close();
 		System.exit(0);
 
-
 	}
 
-
-	
 //	
 //	// output map collection into csv file
 //	public static void collectionToCSV(File csv, Map<Integer,oldCustomer> allCustomers) {
@@ -122,38 +114,28 @@ public class DollarsBankApplication {
 ////			System.out.println("SUCCESSFULLY closed file reader stream");
 //		}		
 //    }		
-		
-	
-		
-	
+
 	// Catch non integer input, -> must make some tweaks
 	public static int checkInt(Scanner sc) {
 
 		int currentInput = 0;
 		boolean correctInput = false;
-		
-		while(correctInput == false) {
+
+		while (correctInput == false) {
 			try {
 //				System.out.println("\nInput your choice: "); // DEBUG
 				currentInput = sc.nextInt();
 				correctInput = true;
-				return currentInput;		
+				return currentInput;
 
-			}
-			catch(InputMismatchException exception) {
+			} catch (InputMismatchException exception) {
 				consolePrinter.printError("Please enter a choice from above.");
-			}
-			finally {
+			} finally {
 				sc.nextLine();
-				
+
 			}
 		}
-		return currentInput;		
+		return currentInput;
 	}
 
-	
-
 }
-	
-	
-

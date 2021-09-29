@@ -37,8 +37,23 @@ public class DollarsBankController {
 
 	}
 
+	public boolean checkValidPassword(String password, String regex) {
+
+		Pattern p = Pattern.compile(regex);// . represents single character
+		Matcher m = p.matcher(password);
+		boolean isValid = m.matches();
+		if (!isValid) {
+			printer.printError("Password must have 8 characters with Lower, Upper, & Special");
+		}
+
+		return isValid;
+	}
+
 	public void createNewAccount(Scanner scanner) {
 
+		String regex = Account.getPasswordregex();
+
+		;
 		String date = getDateAndTime();
 
 		printer.printFormattedTextBox("Enter Details for New Account");
@@ -46,16 +61,35 @@ public class DollarsBankController {
 		String options[] = printer.getNewAccountOptions();
 		String userInput[] = new String[5];
 
+		String password = "";
 		// grab all data except initialDeposit
 		// print the options for creating account and store that input
-		for (int i = 0; i < options.length - 1; i++) {
-			System.out.println(options[i]);
-			userInput[i] = scanner.nextLine();
+		for (int i = 0; i < options.length; i++) {
+
+			// if on password input
+			if (i == options.length - 1) {
+				do {
+					// print password prompt
+					System.out.println(options[options.length - 1]);
+
+					password = scanner.nextLine();
+
+				} // keep checking asking for password until it matches regex
+				while (checkValidPassword(password, regex) == false);
+
+				userInput[i] = password;
+
+			} else {
+				System.out.println(options[i]);
+
+				userInput[i] = scanner.nextLine();
+
+			}
 
 		}
 
 		// print initialDeposit option
-		System.out.println(options[5]);
+		System.out.println("\nInitial Deposit: ");
 		Double initialDeposit = checkDouble(scanner);
 
 		// account has a savingsAccount, will initialize within account constructor
@@ -72,36 +106,13 @@ public class DollarsBankController {
 
 		printer.successMessage("Successful deposit of " + initialDeposit);
 
-		currentAccount.addTransaction("\nInitial deposit of " + initialDeposit + " in the account [ "
+		currentAccount.addTransaction("\nInitial deposit of " + initialDeposit + " in your account [ "
 				+ currentCustomer.getCustomerAccount().getUsername() + " ]");
 		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
 
 	}
 
-	public Double checkDouble(Scanner scanner) {
-		boolean isDouble = false;
-		Double initialDeposit = 0.0;
 
-		do {
-
-			try {
-				initialDeposit = Double.parseDouble(scanner.nextLine());
-				isDouble = true;
-			} catch (NumberFormatException e) {
-				printer.printError("Please enter a number.");
-			}
-		} while (isDouble == false);
-		return initialDeposit;
-	}
-
-	public boolean checkPassword(String password, String regex) {
-
-		Pattern p = Pattern.compile(regex);// . represents single character
-		Matcher m = p.matcher(password);
-		boolean isValid = m.matches();
-
-		return isValid;
-	}
 
 	public void login(Scanner scanner) {
 
@@ -199,46 +210,8 @@ public class DollarsBankController {
 
 	}
 
-	private void printCurrentBalance(Customer currentCustomer) {
 
-		Double currentBalance = currentCustomer.getCustomerAccount().getSavings().getCurrentBalance();
 
-		if (currentBalance <= 10.0) {
-			printer.printError("Balance Low: " + currentBalance);
-
-		} else {
-			printer.successMessage("Your current balance is : " + currentBalance);
-
-		}
-
-	}
-
-	private void displayCustomerInformation(Customer currentCustomer, Scanner scanner) {
-		printer.printFormattedTextBox("Customer Information");
-
-		System.out.println(currentCustomer.customerInformation());
-	}
-
-	private void last5Transactions(Customer currentCustomer, Scanner scanner) {
-
-		printer.printFormattedTextBox("5 Most Recent Transactions");
-		ArrayList<String> temp = currentCustomer.getCustomerAccount().getTransactions();
-
-		for (String transaction : temp) {
-			System.out.println(transaction);
-		}
-		System.out.println();
-	}
-
-	public String getDateAndTime() {
-
-		Format formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
-
-		String date = formatter.format(new Date());
-
-		return date;
-
-	}
 
 	public void deposit(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Deposit");
@@ -259,10 +232,27 @@ public class DollarsBankController {
 
 		String date = getDateAndTime();
 
-		currentAccount.addTransaction("\nDeposit of " + deposit + " in the account [ "
+		currentAccount.addTransaction("\nDeposit of " + deposit + " in your account [ "
 				+ currentCustomer.getCustomerAccount().getUsername() + " ]");
 		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
 
+	}
+	
+
+	public boolean isWithdrawPossible(Customer currentCustomer, Double withdraw) {
+
+		Double currentBalance = currentCustomer.getCustomerAccount().getSavings().getCurrentBalance();
+		if (withdraw == 0.0) {
+
+			printer.printError("Insufficient funds in account for withdraw, your balance is 0.0");
+
+		} else if (withdraw <= currentBalance) {
+
+			return true;
+		} else {
+			printer.printError("Insufficient funds in account for withdraw, your balance is " + currentBalance);
+		}
+		return false;
 	}
 
 	public void withdraw(Customer currentCustomer, Scanner scanner) {
@@ -295,27 +285,12 @@ public class DollarsBankController {
 
 		System.out.println();
 
-		currentAccount.addTransaction("\nWithdraw of " + withdraw + " from the account [ "
+		currentAccount.addTransaction("\nWithdraw of " + withdraw + " from your account [ "
 				+ currentCustomer.getCustomerAccount().getUsername() + " ]");
 		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
 
 	}
 
-	public boolean isWithdrawPossible(Customer currentCustomer, Double withdraw) {
-
-		Double currentBalance = currentCustomer.getCustomerAccount().getSavings().getCurrentBalance();
-		if (withdraw == 0.0) {
-
-			printer.printError("Insufficient funds in account for withdraw, your balance is 0.0");
-
-		} else if (withdraw <= currentBalance) {
-
-			return true;
-		} else {
-			printer.printError("Insufficient funds in account for withdraw, your balance is " + currentBalance);
-		}
-		return false;
-	}
 
 	public void fundsTransfer(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Funds Transfer");
@@ -334,6 +309,7 @@ public class DollarsBankController {
 
 			Double transferAmount = 0.0;
 
+			// Grab objects for the two parties apart of the transfer
 			Account currentCustomerAccount = currentCustomer.getCustomerAccount();
 			String currentCustomerUserName = currentCustomerAccount.getUsername();
 
@@ -345,6 +321,7 @@ public class DollarsBankController {
 			System.out.println("How much money would you like to transfer to " + otherUsername + "?");
 			transferAmount = checkDouble(scanner);
 
+			// if the withdraw is possible then withdraw and deposit into the other account
 			if (isWithdrawPossible(currentCustomer, transferAmount)) {
 
 				// withdraw from current customer saving account
@@ -377,7 +354,72 @@ public class DollarsBankController {
 		}
 
 	}
+	
 
+	private void displayCustomerInformation(Customer currentCustomer, Scanner scanner) {
+		printer.printFormattedTextBox("Customer Information");
+
+		System.out.println(currentCustomer.customerInformation());
+	}
+
+	private void last5Transactions(Customer currentCustomer, Scanner scanner) {
+
+		printer.printFormattedTextBox("5 Most Recent Transactions");
+		ArrayList<String> temp = currentCustomer.getCustomerAccount().getTransactions();
+
+		for (String transaction : temp) {
+			System.out.println(transaction);
+		}
+		System.out.println();
+	}
+	
+	
+	
+	//Helper functions
+	
+	public Double checkDouble(Scanner scanner) {
+		boolean isDouble = false;
+		Double initialDeposit = 0.0;
+
+		do {
+
+			try {
+				initialDeposit = Double.parseDouble(scanner.nextLine());
+				isDouble = true;
+			} catch (NumberFormatException e) {
+				printer.printError("Please enter a number.");
+			}
+		} while (isDouble == false);
+		return initialDeposit;
+	}
+
+	
+	public String getDateAndTime() {
+
+		Format formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
+
+		String date = formatter.format(new Date());
+
+		return date;
+
+	}
+
+	
+
+	private void printCurrentBalance(Customer currentCustomer) {
+
+		Double currentBalance = currentCustomer.getCustomerAccount().getSavings().getCurrentBalance();
+
+		if (currentBalance <= 10.0) {
+			printer.printError("Balance Low: " + currentBalance);
+
+		} else {
+			printer.successMessage("Your current balance is : " + currentBalance);
+
+		}
+
+	}
+	
 	public static DollarsBankController getInstance() {
 		if (single_instance == null) {
 
