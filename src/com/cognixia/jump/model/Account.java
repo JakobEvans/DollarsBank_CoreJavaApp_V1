@@ -4,10 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.cognixia.jump.utility.ConsolePrinterUtility;
 
 public class Account {
 
 	final static private String passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[#?!@$%^&*-]).{8,}$";
+	
+	final static private String phoneNumberRegex = "^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$";
+	
+	
+	
+	static private ConsolePrinterUtility printer = ConsolePrinterUtility.getInstance();
+
 
 	private String username;
 
@@ -46,6 +57,32 @@ public class Account {
 		this.initialDeposit = 0.0;
 		this.savings = new SavingsAccount();
 
+	}
+
+	
+	
+	public static boolean checkValidPassword(String password, String regex) {
+
+		Pattern p = Pattern.compile(regex);// . represents single character
+		Matcher m = p.matcher(password);
+		boolean isValid = m.matches();
+		if (!isValid) {
+			printer.printError("Password must have 8 characters with Lower, Upper, & Special");
+		}
+
+		return isValid;
+	}
+	
+	public static boolean checkValidPhoneNumber(String phoneNumber, String regex) {
+
+		Pattern p = Pattern.compile(regex);// . represents single character
+		Matcher m = p.matcher(phoneNumber);
+		boolean isValid = m.matches();
+		if (!isValid) {
+			printer.printError("Phone number must be a valid United States number.");
+		}
+
+		return isValid;
 	}
 
 	public SavingsAccount getSavings() {
@@ -92,6 +129,10 @@ public class Account {
 
 	public static String getPasswordregex() {
 		return passwordRegex;
+	}
+
+	public static String getPhonenumberregex() {
+		return phoneNumberRegex;
 	}
 
 }

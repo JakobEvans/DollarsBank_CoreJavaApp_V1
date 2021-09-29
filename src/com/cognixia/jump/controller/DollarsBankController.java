@@ -37,23 +37,36 @@ public class DollarsBankController {
 
 	}
 
-	public boolean checkValidPassword(String password, String regex) {
-
-		Pattern p = Pattern.compile(regex);// . represents single character
-		Matcher m = p.matcher(password);
-		boolean isValid = m.matches();
-		if (!isValid) {
-			printer.printError("Password must have 8 characters with Lower, Upper, & Special");
-		}
-
-		return isValid;
-	}
+//	public boolean checkValidPassword(String password, String regex) {
+//
+//		Pattern p = Pattern.compile(regex);// . represents single character
+//		Matcher m = p.matcher(password);
+//		boolean isValid = m.matches();
+//		if (!isValid) {
+//			printer.printError("Password must have 8 characters with Lower, Upper, & Special");
+//		}
+//
+//		return isValid;
+//	}
+//	
+//	public boolean checkValidPhoneNumber(String phoneNumber, String regex) {
+//
+//		Pattern p = Pattern.compile(regex);// . represents single character
+//		Matcher m = p.matcher(phoneNumber);
+//		boolean isValid = m.matches();
+//		if (!isValid) {
+//			printer.printError("Phone number must be a valid United States number.");
+//		}
+//
+//		return isValid;
+//	}
 
 	public void createNewAccount(Scanner scanner) {
 
-		String regex = Account.getPasswordregex();
+		String regexPassword = Account.getPasswordregex();
+		String regexPhone = Account.getPhonenumberregex();
 
-		;
+		
 		String date = getDateAndTime();
 
 		printer.printFormattedTextBox("Enter Details for New Account");
@@ -62,24 +75,75 @@ public class DollarsBankController {
 		String userInput[] = new String[5];
 
 		String password = "";
+		String phoneNumber = "";
+		String username = "";
+
+		boolean doesUsernameExist = false;
+		
+		int counter = 0;
+
 		// grab all data except initialDeposit
 		// print the options for creating account and store that input
 		for (int i = 0; i < options.length; i++) {
-
-			// if on password input
-			if (i == options.length - 1) {
+			
+		
+			
+			
+			
+			//PHONENUMBER VALIDATION
+			if (i == options.length - 3) {
 				do {
 					// print password prompt
-					System.out.println(options[options.length - 1]);
+					System.out.println(options[i]);
+
+					phoneNumber = scanner.nextLine();
+
+				} // keep checking asking for password until it matches regex
+				while (Account.checkValidPhoneNumber(phoneNumber, regexPhone) == false);
+				
+				userInput[i] = phoneNumber;
+
+				
+				
+			}
+			//USERNAME VALIDATION
+			else if (i == options.length - 2) {
+				
+				do {
+					
+					if(counter >= 1) {
+						printer.printError("The username " + username + " already exists. Please enter a different username.");;
+					}
+					// print username prompt
+					System.out.println(options[i]);
+
+					username = scanner.nextLine();
+					++counter;
+
+				} // keep asking for username if it already exists
+				while (username_To_Customer.containsKey(username) == true);
+				
+				userInput[i] = username;
+
+				
+				
+			}
+			//PASSWORD VALIDATION
+			else if (i == options.length - 1) {
+				do {
+					// print password prompt
+					System.out.println(options[i]);
 
 					password = scanner.nextLine();
 
 				} // keep checking asking for password until it matches regex
-				while (checkValidPassword(password, regex) == false);
+				while (Account.checkValidPassword(password, regexPassword) == false);
 
 				userInput[i] = password;
 
-			} else {
+			} 
+	
+			else {
 				System.out.println(options[i]);
 
 				userInput[i] = scanner.nextLine();
@@ -330,17 +394,21 @@ public class DollarsBankController {
 				// deposit into the other customers savings account
 				otherCustomerAccount.getSavings().depositToAccount(transferAmount);
 
+				
 				printer.successMessage("Successfully transfered " + transferAmount + " to the account with username [ "
 						+ otherUsername + " ]");
 
+				
 				// add a transaction for making transfer to another customer
 				currentCustomerAccount.addTransaction("\nTransfer of " + transferAmount + " to the account [ "
 						+ otherUsername + " ] from your account [ " + currentCustomer.getCustomerAccount().getUsername()
 						+ " ]");
+				
 				currentCustomerAccount.addTransaction(
 						"Balance - " + currentCustomerAccount.getSavings().getCurrentBalance() + " on " + date);
 
-				// add a transaction for receiving transfer on other customer
+				
+				// add a transaction for receiving transfer from other customer
 				otherCustomerAccount.addTransaction("\nRevieved transfer of " + transferAmount + " from the account [ "
 						+ currentCustomerUserName + " ] to your account [ " + otherUsername + " ]");
 				otherCustomerAccount.addTransaction(
@@ -348,7 +416,8 @@ public class DollarsBankController {
 
 			}
 
-		} else {
+		} 
+		else {
 			printer.printError("User was not found.");
 
 		}

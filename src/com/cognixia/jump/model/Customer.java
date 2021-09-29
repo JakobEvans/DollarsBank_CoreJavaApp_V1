@@ -92,7 +92,7 @@ public class Customer {
 	}
 
 	public String customerInformation() {
-		return "CustomerId --> " + customerId + "\nName = " + name + "\nCustomer Address = " + address
+		return "\nCustomerId = " + customerId + "\nCustomer Name = " + name + "\nCustomer Address = " + address
 				+ "\nCustomer Phone Number = " + phoneNumber + "\nAccount Username = " + customerAccount.getUsername()
 				+ "\nAccount Password = " + customerAccount.getPassword() + "\nAccount Initial Deposit = "
 				+ customerAccount.getInitialDeposit() + "\nCurrent Savings Account Balance: "
