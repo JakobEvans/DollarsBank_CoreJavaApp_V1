@@ -37,36 +37,11 @@ public class DollarsBankController {
 
 	}
 
-//	public boolean checkValidPassword(String password, String regex) {
-//
-//		Pattern p = Pattern.compile(regex);// . represents single character
-//		Matcher m = p.matcher(password);
-//		boolean isValid = m.matches();
-//		if (!isValid) {
-//			printer.printError("Password must have 8 characters with Lower, Upper, & Special");
-//		}
-//
-//		return isValid;
-//	}
-//	
-//	public boolean checkValidPhoneNumber(String phoneNumber, String regex) {
-//
-//		Pattern p = Pattern.compile(regex);// . represents single character
-//		Matcher m = p.matcher(phoneNumber);
-//		boolean isValid = m.matches();
-//		if (!isValid) {
-//			printer.printError("Phone number must be a valid United States number.");
-//		}
-//
-//		return isValid;
-//	}
-
 	public void createNewAccount(Scanner scanner) {
 
 		String regexPassword = Account.getPasswordregex();
 		String regexPhone = Account.getPhonenumberregex();
 
-		
 		String date = getDateAndTime();
 
 		printer.printFormattedTextBox("Enter Details for New Account");
@@ -79,18 +54,14 @@ public class DollarsBankController {
 		String username = "";
 
 		boolean doesUsernameExist = false;
-		
+
 		int counter = 0;
 
 		// grab all data except initialDeposit
 		// print the options for creating account and store that input
 		for (int i = 0; i < options.length; i++) {
-			
-		
-			
-			
-			
-			//PHONENUMBER VALIDATION
+
+			// PHONENUMBER VALIDATION
 			if (i == options.length - 3) {
 				do {
 					// print password prompt
@@ -100,19 +71,19 @@ public class DollarsBankController {
 
 				} // keep checking asking for password until it matches regex
 				while (Account.checkValidPhoneNumber(phoneNumber, regexPhone) == false);
-				
+
 				userInput[i] = phoneNumber;
 
-				
-				
 			}
-			//USERNAME VALIDATION
+			// USERNAME VALIDATION
 			else if (i == options.length - 2) {
-				
+
 				do {
-					
-					if(counter >= 1) {
-						printer.printError("The username " + username + " already exists. Please enter a different username.");;
+
+					if (counter >= 1) {
+						printer.printError(
+								"The username " + username + " already exists. Please enter a different username.");
+						;
 					}
 					// print username prompt
 					System.out.println(options[i]);
@@ -122,13 +93,11 @@ public class DollarsBankController {
 
 				} // keep asking for username if it already exists
 				while (username_To_Customer.containsKey(username) == true);
-				
+
 				userInput[i] = username;
 
-				
-				
 			}
-			//PASSWORD VALIDATION
+			// PASSWORD VALIDATION
 			else if (i == options.length - 1) {
 				do {
 					// print password prompt
@@ -141,8 +110,8 @@ public class DollarsBankController {
 
 				userInput[i] = password;
 
-			} 
-	
+			}
+
 			else {
 				System.out.println(options[i]);
 
@@ -175,8 +144,6 @@ public class DollarsBankController {
 		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
 
 	}
-
-
 
 	public void login(Scanner scanner) {
 
@@ -274,20 +241,17 @@ public class DollarsBankController {
 
 	}
 
-
-
-
 	public void deposit(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Deposit");
 
 		System.out.println(
 				"\nYour current balance is : " + currentCustomer.getCustomerAccount().getSavings().getCurrentBalance());
 		System.out.println("How much would you like to deposit?");
-		String deposit = scanner.nextLine();
+		Double deposit = checkDouble(scanner);
 
 		Account currentAccount = currentCustomer.getCustomerAccount();
 
-		currentAccount.getSavings().depositToAccount(Double.parseDouble(deposit));
+		currentAccount.getSavings().depositToAccount(deposit);
 
 		System.out.println(
 				"\nAfter the deposit your current balance is: " + currentAccount.getSavings().getCurrentBalance());
@@ -301,7 +265,6 @@ public class DollarsBankController {
 		currentAccount.addTransaction("Balance - " + currentAccount.getSavings().getCurrentBalance() + " on " + date);
 
 	}
-	
 
 	public boolean isWithdrawPossible(Customer currentCustomer, Double withdraw) {
 
@@ -355,7 +318,6 @@ public class DollarsBankController {
 
 	}
 
-
 	public void fundsTransfer(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Funds Transfer");
 		String date = getDateAndTime();
@@ -394,20 +356,17 @@ public class DollarsBankController {
 				// deposit into the other customers savings account
 				otherCustomerAccount.getSavings().depositToAccount(transferAmount);
 
-				
 				printer.successMessage("Successfully transfered " + transferAmount + " to the account with username [ "
 						+ otherUsername + " ]");
 
-				
 				// add a transaction for making transfer to another customer
 				currentCustomerAccount.addTransaction("\nTransfer of " + transferAmount + " to the account [ "
 						+ otherUsername + " ] from your account [ " + currentCustomer.getCustomerAccount().getUsername()
 						+ " ]");
-				
+
 				currentCustomerAccount.addTransaction(
 						"Balance - " + currentCustomerAccount.getSavings().getCurrentBalance() + " on " + date);
 
-				
 				// add a transaction for receiving transfer from other customer
 				otherCustomerAccount.addTransaction("\nRevieved transfer of " + transferAmount + " from the account [ "
 						+ currentCustomerUserName + " ] to your account [ " + otherUsername + " ]");
@@ -416,14 +375,12 @@ public class DollarsBankController {
 
 			}
 
-		} 
-		else {
+		} else {
 			printer.printError("User was not found.");
 
 		}
 
 	}
-	
 
 	private void displayCustomerInformation(Customer currentCustomer, Scanner scanner) {
 		printer.printFormattedTextBox("Customer Information");
@@ -436,16 +393,18 @@ public class DollarsBankController {
 		printer.printFormattedTextBox("5 Most Recent Transactions");
 		ArrayList<String> temp = currentCustomer.getCustomerAccount().getTransactions();
 
+		if (temp.size() == 5) {
+			temp.remove(0);
+		}
+
 		for (String transaction : temp) {
 			System.out.println(transaction);
 		}
 		System.out.println();
 	}
-	
-	
-	
-	//Helper functions
-	
+
+	// Helper functions
+
 	public Double checkDouble(Scanner scanner) {
 		boolean isDouble = false;
 		Double initialDeposit = 0.0;
@@ -462,7 +421,6 @@ public class DollarsBankController {
 		return initialDeposit;
 	}
 
-	
 	public String getDateAndTime() {
 
 		Format formatter = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z");
@@ -472,8 +430,6 @@ public class DollarsBankController {
 		return date;
 
 	}
-
-	
 
 	private void printCurrentBalance(Customer currentCustomer) {
 
@@ -488,7 +444,7 @@ public class DollarsBankController {
 		}
 
 	}
-	
+
 	public static DollarsBankController getInstance() {
 		if (single_instance == null) {
 

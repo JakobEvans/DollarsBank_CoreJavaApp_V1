@@ -60,6 +60,7 @@ public class ConsolePrinterUtility {
 	// can only print one line ,will improve for multi-line strings
 	public void printFormattedTextBox(String str) {
 
+		System.out.println();
 		System.out.printf(ColorsUtility.ANSI_BLUE + "+");
 
 		for (int i = 0; i < str.length() + 2; i++) {
